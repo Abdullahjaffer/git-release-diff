@@ -2,6 +2,14 @@
 
 Git Release Diff is a React application built with Ant Design and GitHub's API. It allows users to fetch, filter, and compare version/release messages from GitHub repositories.
 
+## Demo
+
+A live demo of the application will be available [here](https://abdullahjaffer.github.io/git-release-diff).
+
+## Screenshot
+
+![Git Release Diff Screenshot](/public/screencapture-localhost-3001-2024-06-22-09_37_46.png?raw=true)
+
 ## Features
 
 - **Fetch Releases**: Retrieve the first 100 releases from any GitHub repository, with an option to load more.
@@ -13,7 +21,7 @@ Git Release Diff is a React application built with Ant Design and GitHub's API. 
 1. **Clone the repository:**
 
    ```sh
-   git clone <repository-url>
+   git clone https://github.com/Abdullahjaffer/git-release-diff.git
    cd git-release-diff
    ```
 
@@ -36,14 +44,6 @@ Git Release Diff is a React application built with Ant Design and GitHub's API. 
 1. Enter the GitHub repository link.
 2. Click the "Fetch Releases" button to retrieve the releases.
 3. Filter and select releases to view and compare their details.
-
-## Demo
-
-A live demo of the application will be available [here](#).
-
-## Screenshot
-
-![Git Release Diff Screenshot](#)
 
 ## Contributing
 
