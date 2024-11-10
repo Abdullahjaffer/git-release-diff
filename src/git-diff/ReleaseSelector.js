@@ -61,7 +61,7 @@ const ReleaseSelector = ({ options, checkedList, setCheckedList }) => {
 			<div
 				style={{
 					maxHeight: 300,
-					overflowY: "scroll",
+					overflowY: "auto",
 				}}
 			>
 				<CheckboxGroup

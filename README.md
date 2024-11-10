@@ -1,6 +1,6 @@
-# Git Release Diff
+# Git & NPM Release Diff
 
-Git Release Diff is a React application built with Ant Design and GitHub's API. It allows users to fetch, filter, and compare version/release messages from GitHub repositories.
+Git & NPM Release Diff is a React application built with Ant Design and GitHub's API. It allows users to fetch, filter, and compare version/release messages from GitHub repositories.
 
 ## Live
 

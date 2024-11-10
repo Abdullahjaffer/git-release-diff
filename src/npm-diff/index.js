@@ -7,13 +7,10 @@ import ShowReleaseMessages from "./ShowReleaseMessages";
 const ConditionalWrap = ({ children, condition }) =>
 	condition ? children : null;
 
-const Differ = () => {
+const NpmDiff = () => {
 	const [checkedList, setCheckedList] = useState([]);
 	const [loadingReleases, setLoadingReleases] = useState(false);
-	const [loadingMoreReleases, setLoadingMoreReleases] = useState(false);
 	const [releases, setReleases] = useState([]);
-	const [releasesPage, setReleasesPage] = useState(1);
-	const [repo, setRepo] = useState("");
 
 	const [api, contextHolder] = notification.useNotification();
 	const openNotification = (description) => {
@@ -23,37 +20,22 @@ const Differ = () => {
 		});
 	};
 
-	const fetchReleases = async (repoUrl, page) => {
-		// Extract owner and repository name from the URL
-		const repoMatch = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)\.git/);
-		const owner = repoMatch[1];
-		const repo = repoMatch[2];
-		try {
-			const tagResponse = await axios.get(
-				`https://api.github.com/repos/${owner}/${repo}/releases?per_page=100&page=${page}`
-			);
-			setReleases((releases) => [...releases, ...tagResponse.data]);
-		} catch (error) {
-			console.error(error);
-			openNotification(error?.response?.data?.message);
-		}
-	};
-
-	const handleFetchReleases = async ({ repo }) => {
-		setRepo((r) => repo);
-		setReleasesPage(() => 1);
+	const handleFetchReleases = async ({ packageName }) => {
 		setReleases(() => []);
 		setLoadingReleases(true);
-		await fetchReleases(repo, 1);
-		setReleasesPage((r) => r + 1);
-		setLoadingReleases(false);
-	};
+		try {
+			let response = await axios
+				.get(`https://registry.npmjs.org/${packageName}`)
+				.then((res) => res.data);
 
-	const handleFetchMore = async () => {
-		setLoadingMoreReleases(true);
-		await fetchReleases(repo, releasesPage);
-		setReleasesPage((r) => r + 1);
-		setLoadingMoreReleases(false);
+			setReleases((releases) => [
+				...releases,
+				...Object.values(response.versions).filter((v) => !!v.repository.url),
+			]);
+		} catch (e) {
+			openNotification(e.message);
+		}
+		setLoadingReleases(false);
 	};
 
 	return (
@@ -63,26 +45,26 @@ const Differ = () => {
 				layout="vertical"
 				requiredMark={false}
 				onFinish={handleFetchReleases}
-				initialValues={{
-					repo: "https://github.com/vercel/next.js.git",
-				}}
 			>
 				<Form.Item
-					label="Repository URL"
-					name="repo"
+					label="Package Name"
+					name="packageName"
 					rules={[
 						{
 							required: true,
-							message: "Please enter a repository URL",
+							message: "Please enter a package name",
 						},
 						{
-							pattern: /github\.com\/([^/]+)\/([^/]+)\.git/,
-							message: "Please enter a valid GitHub repository URL",
+							validator: (_, value) => {
+								if (!value.trim())
+									return Promise.reject("Please enter a package name");
+								return Promise.resolve();
+							},
 						},
 					]}
 					tooltip="This is a required field."
 				>
-					<Input placeholder="eg. https://github.com/vercel/next.js.git" />
+					<Input placeholder="eg. @tanstack/react-query" />
 				</Form.Item>
 
 				<Flex justify="end">
@@ -104,22 +86,12 @@ const Differ = () => {
 								<>
 									<ReleaseSelector
 										options={releases.map((release) => ({
-											label: release.name,
-											value: release.id,
+											label: release.version,
+											value: release.version,
 										}))}
 										checkedList={checkedList}
 										setCheckedList={setCheckedList}
 									/>
-									<Button
-										type="dashed"
-										style={{
-											marginTop: 16,
-										}}
-										onClick={handleFetchMore}
-										loading={loadingMoreReleases}
-									>
-										Load more
-									</Button>
 								</>
 							),
 						},
@@ -138,4 +110,4 @@ const Differ = () => {
 	);
 };
 
-export default Differ;
+export default NpmDiff;
