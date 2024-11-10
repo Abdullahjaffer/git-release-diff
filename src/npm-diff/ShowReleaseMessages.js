@@ -24,6 +24,7 @@ const ReleaseCard = ({ release, showOnlyBreaking }) => {
 			const repo = repoMatch[2];
 
 			try {
+				// first try to get the release by version
 				let res = await axios
 					.get(
 						`https://api.github.com/repos/${owner}/${repo}/releases/tags/v${release.version}`
@@ -32,6 +33,7 @@ const ReleaseCard = ({ release, showOnlyBreaking }) => {
 
 				return res;
 			} catch (e) {
+				// if that fails, try to get the release by npm _id
 				let res = await axios
 					.get(
 						`https://api.github.com/repos/${owner}/${repo}/releases/tags/${release._id}`
